@@ -1,0 +1,249 @@
+﻿
+@inject Services.PinControl.PinControlService PinManager
+@using PiControllerLib.PinControl
+
+<style>
+.togglebutton {
+  border: none;
+  color: #282c34;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  min-width: 80px;
+  border-radius: 20%;
+  min-height: 42px;
+}
+
+.td-text{
+  align-content: center;
+  text-align: center;
+  vertical-align: middle;
+  <!-- display: inline-block; -->
+  font-size: 16px;
+}
+.select{
+  align-content: center;
+  text-align: center;
+  vertical-align: middle;
+}
+</style>
+
+@if(Pin == null)
+{
+    <h5>Initializing</h5>
+}
+else
+{
+    <tr style="border-color: #3a3a3a">
+        <td  style="border-color: #3a3a3a; vertical-align: middle">@Pin.PinNumber</td>
+        <td  style="border-color: #3a3a3a; vertical-align: middle">@Pin.PinFunction</td>
+        
+        @if(Pin.PinType == ePinType.GPIO)
+        {
+            @if(Pin.GPIONumber == 14 || Pin.GPIONumber == 15)
+            {
+                <td/>
+                <td/>
+            }
+            else
+            {
+                <td style="border-color: #3a3a3a">
+                 <!--    <select style="vertical-align: middle" @bind="Pin.Mode">
+                        <option value=@pincontrol.ePinMode.Output>@pincontrol.ePinMode.Output</option>
+                        <option value=@pincontrol.ePinMode.Input>@pincontrol.ePinMode.Input</option>
+                        <option value=@pincontrol.ePinMode.SW_PWM>@pincontrol.ePinMode.SW_PWM</option>
+                        <option value=@pincontrol.ePinMode.HW_PWM>@pincontrol.ePinMode.HW_PWM</option>
+                    </select> -->
+                    <button disabled="@ModeChangeDisabled" class="togglebutton" style="background-color: @ModeToggleColor" @onclick=Pin.TogglePinMode>@Pin.PinMode</button>
+                </td>
+                <td style="border-color: #3a3a3a; vertical-align: middle" >@Pin.InputValue</td>
+            }
+        }
+        else
+        {
+            <td style="border-color: #3a3a3a" ></td>
+            <td style="border-color: #3a3a3a" ></td>
+        }
+        
+        @if(Pin.PinType != ePinType.GPIO)
+        {
+            <td style="border-color: #3a3a3a">
+                <button disabled class="togglebutton" style="background-color: @ToggleButtonColor; cursor: default"></button>
+            
+            </td>
+            <td style="border-color: #3a3a3a"></td>
+        }
+        else
+        {
+            @if(Pin.GPIONumber == 14 || Pin.GPIONumber == 15)
+            {
+                <td/>
+                <td/>
+            }
+            else
+            {
+                <td style="border-color: #3a3a3a">
+                    <button disabled="@ToggleStateDisabled" class="togglebutton" style="background-color: @ToggleButtonColor" @onclick=Pin.ChangeState>Toggle</button>
+                </td>
+                <td style="border-color: #3a3a3a">
+                    <button disabled="@RepeatingToggleDisabled" class="togglebutton" style="background-color: @RepeatingButtonColor"  @onclick=Pin.RepeatingToggleState>@RepeatToggleMessage</button>
+                </td>
+            }
+        }
+        @if(Pin.PinType == ePinType.GPIO)
+        {
+            @if(Pin.GPIONumber == 14 || Pin.GPIONumber == 15)
+            {
+                <td/>
+                <td/>
+                <td/>
+            }
+            else
+            {
+                <td style="border-color: #3a3a3a; vertical-align: middle"><input type="number" style="max-width: 100px" @bind-value="@Pin.TimeHigh"></td>
+                <td style="border-color: #3a3a3a; vertical-align: middle"><input type="number" style="max-width: 100px" @bind-value="@Pin.TimeLow"></td>
+                <td style="border-color: #3a3a3a; vertical-align: middle">
+                    <button class="togglebutton" style="background-color: @LockColor"  @onclick=SetLock>@LockMessage</button>
+                </td>
+            }
+        }
+        else
+        {
+            <td style="border-color: #3a3a3a" ></td>
+            <td style="border-color: #3a3a3a" ></td>
+            <td style="border-color: #3a3a3a" ></td>
+        }
+        
+    </tr>
+}
+@code {
+    [Parameter]
+    public int ID {get; set;} 
+    public PiControllerLib.PinControl.Pin Pin;
+
+    private string _ToggleButtonColor;
+    public string ToggleButtonColor 
+    {
+        get {return _ToggleButtonColor;}
+        set{_ToggleButtonColor = value;  NotifyDataChanged();}
+    }
+    
+    public string RepeatingButtonColor => SetRepeatingColor();
+    public string RepeatToggleMessage => SetRepeatingMessage();
+    public string ModeToggleColor => SetModeToggleColor();
+    public string LockColor => SetLockColor();
+    public string LockMessage => SetLockMessage();
+    public string ModeButtonColor => SetModeToggleColor();
+    public bool PinLock = false;
+    public bool ToggleStateDisabled => SetStateToggleDisabled();
+    public bool ModeChangeDisabled => SetModeChangeDisabled();
+    public bool RepeatingToggleDisabled => SetRepeatingToggleDisabled();
+    
+    
+        
+    public void SetPinColor()
+    {
+        //Dispatcher.InvokeAsync(() => {
+            //Console.WriteLine($"Set color {Pin.PinNumber} {Pin.PinState.ToString()}");
+            if(Pin.PinType == ePinType.Ground)
+                ToggleButtonColor = "#42A2EF";
+            if(Pin.PinType == ePinType.Power)
+                if(Pin.PinFunction == "Power 5v")
+                    ToggleButtonColor = "#992727";
+                else
+                    ToggleButtonColor = "#E06C75";
+            if(Pin.PinType == ePinType.GPIO)
+                if(Pin.PinState == eState.High)
+                    ToggleButtonColor = "#E06C75";
+                else
+                    ToggleButtonColor = "#42A2EF";
+        //});
+    }
+    public event Action OnChange;
+    private void NotifyDataChanged() => InvokeAsync(() => { OnChange?.Invoke();});//?.Invoke();
+    public string SetRepeatingMessage()
+    {
+        var message = "Start";
+        if(Pin.RepeatingToggle)
+            message = "Stop";
+        
+        return message;
+    }
+    public string SetRepeatingColor()
+    {
+        var color = "#98C379";
+        if(Pin.RepeatingToggle)
+            color = "#D19A66";
+        return color; 
+    }
+
+    public bool SetStateToggleDisabled()
+    {
+        var disabled = false;
+        if(PinLock || Pin.PinMode.ToString() == "Input" || Pin.RepeatingToggle)
+            disabled = true;
+        
+        return disabled;
+    }
+    public bool SetRepeatingToggleDisabled()
+    {
+        var disabled = false;
+        if(Pin.PinMode.ToString() == "Input" || PinLock)
+            disabled = true;
+        return disabled;
+    }
+    public void SetLock()
+    {
+        
+        if(PinLock)
+            PinLock = false;
+        else
+            PinLock = true;
+    }
+
+    public string SetLockColor()
+    {
+        var color = "#a14630";
+        if(PinLock)
+            color = "#278f82";
+        return color;
+    }
+
+    public string SetLockMessage()
+    {
+        var message = "Lock";
+        if(PinLock)
+            message = "UnLock";
+        return message;
+    }
+
+    public string SetModeToggleColor()
+    {
+        
+        var color = "#cAa93C";
+        if(Pin.PinMode.ToString() == "Input")
+            color = "#8989ff";
+        return color;
+    }
+
+    public bool SetModeChangeDisabled()
+    {
+        bool disabled = false;
+        if(PinLock || Pin.RepeatingToggle)
+            disabled = true;
+        return disabled;
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Pin = await PinManager.GetPin(ID);
+        Pin.Notify += SetPinColor;
+        OnChange += StateHasChanged;
+        SetPinColor();
+    }
+}

@@ -1,0 +1,222 @@
+﻿@page "/pincontrol"
+@inject blazortest.PinControl.PinControlService PinManager
+@using pincontrol
+<style>
+.togglebutton {
+  border: none;
+  color: #282c34;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  min-width: 80px;
+  border-radius: 20%;
+  min-height: 42px;
+}
+.timedtogglebutton {
+  border: none;
+  color: #282c34;
+  background-color: #98C379;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 20%;
+  min-width: 80px;
+}
+.table{
+    color: white;
+    width: 300px;
+}
+.td-text{
+  align-content: center;
+  text-align: center;
+  vertical-align: middle;
+  <!-- display: inline-block; -->
+  font-size: 16px;
+}
+.b_color{
+    border-color: red;
+}
+
+.panel {
+  display: none;
+  overflow: hidden;
+}
+
+.accordian_button{
+  border: none;
+  color:#282c34;
+  background-color:#98C379;
+  padding: 1px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  margin-left: 5px;
+  cursor: pointer;
+  border-radius: 50%;
+  min-width: 14px;
+  min-height: 14px;
+    
+}
+
+</style>
+
+
+<h1>Pin Control</h1>
+
+@if (PinModels == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <br>
+    <div style="display: inline-block">
+        <h5 style="display: inline-block">Legend</h5>
+        <button style="display: inline-block" class="accordian_button" @onclick="ShowHideLegend">@LegendString</button>    
+    </div>
+    <div style="transition: 5s; display: @display; overflow: @overflow">
+        <table class="table table-bordered" style="width:30%">
+    <!-- <table class="table" style="width 300px; float:left"> -->
+        <thead>
+            <tr>
+                <tr>
+                    <th>Function</th>
+                    <th>Color</th>
+                </tr>
+            </tr>
+        </thead>
+        <body>
+            <tr>
+                <td>Power / 5v</td>
+                <td style="background-color: #992727"></td>
+            </tr>
+            <tr>
+                <td>Power / 3.3v</td>
+                <td style="background-color: #E06C75"></td>
+            </tr>
+            <tr>
+                <td>Ground / 0v</td>
+                <td style="background-color: #42A2EF"></td>
+                <!-- <td style="background-color: #000000"></td> -->
+            </tr>
+            <tr>
+                <td>Repeating Off</td>
+                <td style="background-color: #98C379"></td>
+            </tr>
+            <tr>
+                <td>Repeating On</td>
+                <td style="background-color: #D19A66"></td>
+            </tr>
+<!--             <tr>
+                <td>Low</td>
+                <td style="background-color: #42A2EF"></td>
+            </tr> -->
+<!--             <tr>
+                <td>High</td>
+                <td style="background-color: #D19A66"></td>
+            </tr> -->
+        </body>
+        </table>
+    </div>
+    <br>
+    <br>
+    <h5>Pins</h5>
+    <table class="table " >
+        <thead>
+            <tr>
+                <th style="border-color: #3a3a3a">Pin Number</th>
+                <th style="border-color: #3a3a3a">Pin Function</th>
+                <th style="border-color: #3a3a3a">Current State</th>
+                <th style="border-color: #3a3a3a">Repeating Toggle</th>
+                <th style="border-color: #3a3a3a">Time High (ms)</th>
+                <th style="border-color: #3a3a3a">Time Low (ms)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pin in PinModels)
+            {
+                <tr style="border-color: #3a3a3a">
+                    <td  style="border-color: #3a3a3a; vertical-align: middle">@pin.Pin.PinNumber</td>
+                    <td  style="border-color: #3a3a3a; vertical-align: middle">@pin.Pin.PinFunction</td>
+                    @if(pin.Pin.PinType == ePinType.Power)
+                    {
+                        <td style="border-color: #3a3a3a">
+                            <button disabled class="togglebutton" style="background-color: @pin.ToggleButtonColor; cursor: default"></button>
+                        
+                        </td>
+                        <td style="border-color: #3a3a3a"></td>
+                    }
+                    else if(pin.Pin.PinType == ePinType.Ground)
+                    {
+                        <td style="border-color: #3a3a3a">
+                            <button disabled class="togglebutton" style="background-color: @pin.ToggleButtonColor; cursor: default" ></button>
+                        </td>
+                        <td style="border-color: #3a3a3a"></td>
+                    }
+                    else
+                    {
+                        <td style="border-color: #3a3a3a">
+                            <button disabled="@pin.IsDisabled" class="togglebutton" style="background-color: @pin.ToggleButtonColor" @onclick=pin.Pin.ChangeState>Toggle</button>
+                        </td>
+                        <td style="border-color: #3a3a3a">
+                            <button class="timedtogglebutton" style="background-color: @pin.RepeatingButtonColor"  @onclick=pin.Pin.RepeatingToggleState>@pin.RepeatToggleMessage</button>
+                        </td>
+                    }
+                    @if(pin.Pin.PinType == ePinType.GPIO)
+                    {
+                        <td class="b_color" style="border-color: #3a3a3a; vertical-align: middle"><input type="number"  @bind-value="@pin.Pin.TimeHigh"></td>
+                        <td class="b_color" style="border-color: #3a3a3a; vertical-align: middle"><input type="number"  @bind-value="@pin.Pin.TimeLow"></td>
+                    }
+                    else
+                    {
+                        <td style="border-color: #3a3a3a" ></td>
+                        <td style="border-color: #3a3a3a" ></td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+
+@code {
+
+    private List<blazortest.PinControl.PinControlService.PinModel> PinModels;
+    
+    private string LegendString {get;set;} = "+";
+    private string overflow {get;set;} = "hidden";
+    private string display {get;set;} = "none";
+
+    protected override async Task OnInitializedAsync()
+    {
+        PinModels = await PinManager.GetPins();
+    }
+
+    public void TestMethod()
+    {
+        Console.WriteLine("Test Method Called");
+    } 
+    private void ShowHideLegend()
+    {
+        if(LegendString == "-")
+            LegendString = "+";
+        else
+            LegendString = "-";
+        
+        if(display == "none")
+            display = "block";
+        else
+            display = "none";
+        
+
+    }
+}

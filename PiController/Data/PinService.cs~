@@ -1,0 +1,88 @@
+using System;
+using pincontrol;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
+namespace blazortest.PinControl
+{
+    public class PinControlService
+    {
+        public PinManager Manager {get;}
+
+        public PinControlService()
+        {
+            Manager = new PinManager();          
+        }
+
+        public async Task<List<PinModel>> GetPins()
+        {
+            return await Task.FromResult(Manager.Pins.Select(pin => new PinModel(pin)
+            {
+                //Leaving this space open for the event that the pinmodel
+                //class need more injection
+            }).ToList());
+        }
+
+        //User interaction class for pins 
+        public class PinModel
+        {
+            public Pin Pin {get;}
+            public string ToggleButtonColor => SetPinColor();
+            public string RepeatingButtonColor => SetRepeatingColor();
+            public string RepeatToggleMessage => SetRepeatingMessage();
+            public bool IsDisabled => SetButtonDisabled();
+
+            public PinModel(Pin pin)
+            {
+                Pin = pin;
+            }
+            public string SetPinColor()
+            {
+                var color = "#42A2EF";
+
+                if(Pin.PinType == ePinType.Power)
+                    if(Pin.PinFunction == "Power 5v")
+                        color = "#992727";
+                    else
+                        color = "#E06C75";
+                //if(Pin.PinType == ePinType.Ground)
+                //    color = "#000000";
+                if(Pin.PinType == ePinType.GPIO)
+                    if(Pin.PinState == eState.High)
+                        color = "#E06C75";
+//                        color = "#D19A66";
+                
+                return color;
+            }
+
+            public string SetRepeatingMessage()
+            {
+                var message = "Start";
+                if(Pin.RepeatingToggle)
+                    message = "Stop";
+                
+                return message;
+
+            }
+            public string SetRepeatingColor()
+            {
+                var color = "#98C379";
+
+                if(Pin.RepeatingToggle)
+                    color = "#D19A66";
+
+                return color; 
+            }
+
+            public bool SetButtonDisabled()
+            {
+                var disabled = false;
+                if(Pin.RepeatingToggle)
+                    disabled = true;
+                return disabled;
+            }
+
+        }
+    }
+}

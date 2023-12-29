@@ -1,0 +1,5 @@
+For Camera:
+    Need to enable camera in Pi settings
+    
+    Need to install libgdiplus:
+        sudo apt-get install libgdiplus

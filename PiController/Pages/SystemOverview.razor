@@ -1,0 +1,26 @@
+@page "/system"
+
+@inject Services.SystemControl.SystemControlService SystemControl
+
+<h1>System</h1>
+
+<br>
+<h3>System Information</h3>
+<h5>UpTime: @SystemControl.SystemManager.UpTime</h5>
+<h5>Board Model: @SystemControl.SystemManager.BoardModel</h5>
+<h5>Processor Count: @SystemControl.SystemManager.ProcessorCount</h5>
+<h5>Memory: @SystemControl.SystemManager.MemorySize</h5>
+<!-- <h5>Installed Ram: @SystemControl.SystemManager.InstalledRam</h5> -->
+<!-- <h5>Operating System: @SystemControl.SystemManager.OperatingSystem</h5> -->
+<br>
+<h3>IP Adapter Information</h3>
+
+@foreach(var info in SystemControl.SystemManager.IPAdapterInformationList)
+{
+    <h4>@info.AdapterType</h4>
+    <h5>Interface: @info.InterfaceType</h5>
+    <h5>IPAddress: @info.IPAddress</h5>
+    <h5>Operational Status: @info.OperationalStatus</h5>
+    <h5>Dns Enabled: @info.DNSEnabled</h5>
+    <br>
+}

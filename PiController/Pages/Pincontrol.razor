@@ -1,0 +1,166 @@
+﻿@page "/pincontrol"
+@inject Services.PinControl.PinControlService PinManager
+@using PiController.Components
+@using PiControllerLib.PinControl
+<style>
+
+.td-text{
+  align-content: center;
+  text-align: center;
+  vertical-align: middle;
+  <!-- display: inline-block; -->
+  font-size: 16px;
+}
+
+.accordian_button{
+  border: none;
+  color:#282c34;
+  background-color:#98C379;
+  padding: 1px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  margin-left: 5px;
+  cursor: pointer;
+  border-radius: 50%;
+  min-width: 14px;
+  min-height: 14px;
+
+}
+.legend{
+  transition: ease-in-out;
+}
+.table{
+    color: white;
+    
+}
+</style>
+
+
+<h1>Pin Control</h1>
+
+    <br>
+    <div style="display: inline-block">
+        <h5 style="display: inline-block">Legend</h5>
+        <button style="display: inline-block" class="accordian_button" @onclick="ShowHideLegend">@LegendString</button>    
+    </div>
+    <div class="legend" style="display: @display; overflow: @overflow">
+        <table class="table table-bordered" style="width:70%; font-size: 12px">
+        <thead>
+            <tr>
+                <tr>
+                    <th>Function</th>
+                    <th>Color</th>
+                    <th>Description</th>
+                </tr>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Power / 5v</td>
+                <td style="background-color: #992727"></td>
+                <td>Color used to indicate 5 volts.</td>
+            </tr>
+            <tr>
+                <td>Power / 3.3v</td>
+                <td style="background-color: #E06C75"></td>
+                <td>Color used to indicate 3.3 volts.</td>
+            </tr>
+            <tr>
+                <td>Input Mode</td>
+                <td style="background-color: #8989ff"></td>
+                <td>Color used to indicate pin INPUT mode.</td>
+            </tr>
+            <tr>
+                <td>Output Mode</td>
+                <td style="background-color: #cAa93C"></td>
+                <td>Color used to indicate pin OUTPUT mode.</td>
+            </tr>            
+            <tr>
+                <td>Ground / 0v</td>
+                <td style="background-color: #42A2EF"></td>
+                <td>Color used to indicate 0 volts or ground.</td>
+                <!-- <td style="background-color: #000000"></td> -->
+            </tr>
+            <tr>
+                <td>Repeating Off</td>
+                <td style="background-color: #98C379"></td>
+                <td>Color used to indicate that a repeating toggle IS NOT active.</td>
+            </tr>
+            <tr>
+                <td>Repeating On</td>
+                <td style="background-color: #D19A66"></td>
+                <td>Color used to indicate that a repeating toggle IS active.</td>
+            </tr>
+            <tr>
+                <td>Lock</td>
+                <td style="background-color: #a14630"></td>
+                <td>Safety OFF. Color used to indicate that a pin is NOT locked.</td>
+            </tr>
+            <tr>
+                <td>Unlock</td>
+                <td style="background-color: #278f82"></td>
+                <td>Safety ON. Color used to indicate that a pin IS locked.</td>
+
+            </tr>
+        </tbody>
+        </table>
+    </div>
+    <br>
+    <br>
+    <h5>Pins</h5>
+    <table class="table " style="width: 100%">
+        <thead>
+            <tr>
+                <th style="border-color: #3a3a3a">Pin Number</th>
+                <th style="border-color: #3a3a3a">Pin Function</th>
+                <th style="border-color: #3a3a3a">Mode</th>
+                <th style="border-color: #3a3a3a">Input Value</th>                
+                <th style="border-color: #3a3a3a">Current State</th>
+                <th style="border-color: #3a3a3a">Repeating Toggle</th>
+                <th style="border-color: #3a3a3a">Time High (ms)</th>
+                <th style="border-color: #3a3a3a">Time Low (ms)</th>
+                <th style="border-color: #3a3a3a">Lock</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for(int i = 1; i < 41; i++)
+            {
+                <PinComponent ID=@i></PinComponent>
+            }
+ 
+        </tbody>
+    </table>
+
+
+
+@code {
+
+    //private List<PiController.PinControl.PinControlService.PinModel> PinModels;
+    
+    private string LegendString {get;set;} = "+";
+    private string overflow {get;set;} = "hidden";
+    private string display {get;set;} = "none";
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //}
+
+    public void TestMethod()
+    {
+        Console.WriteLine("Test Method Called");
+    } 
+    private void ShowHideLegend()
+    {
+        if(LegendString == "-")
+            LegendString = "+";
+        else
+            LegendString = "-";
+        
+        if(display == "none")
+            display = "block";
+        else
+            display = "none";
+    }
+}

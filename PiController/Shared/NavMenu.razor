@@ -1,0 +1,43 @@
+﻿<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand " href="">Pi Controller</a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+<div class="@NavMenuCssClass" style="width: 150px; max-width: 150px" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column" style="width: 150px; max-width: 150px">
+        <!-- flex-column -->
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="pincontrol">
+                <span class="oi oi-pin" aria-hidden="true"></span> Pins
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="lights">
+                <span class="oi oi-sun" aria-hidden="true"></span> Lights
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="camera">
+                <span class="oi oi-camera-slr" aria-hidden="true"></span> Camera
+            </NavLink>
+        </li>        
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="help">
+                <span class="oi oi-question-mark" aria-hidden="true"></span> Help
+            </NavLink>
+        </li>
+    </ul>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

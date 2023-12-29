@@ -1,0 +1,16 @@
+using System;
+using Unosquare.RaspberryIO;
+using System.Net;
+
+namespace PiControllerLib.SystemControl
+{
+	public class SystemManager
+	{
+		public System.Net.IPHostEntry Host => Dns.GetHostEntry(Dns.GetHostName());
+		public string IPAddress => Host.AddressList[1].ToString();
+		public string SystemInfo => Pi.Info.ToString();
+		public SystemManager()
+		{
+		}
+	}
+}

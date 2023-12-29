@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+ul {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+
+  overflow: hidden;
+  background-color: #98C379;
+}
+
+li {
+  float: left;
+  border-right: 1px solid #bbb;
+  min-width: 120px;
+  max-width: 120px;
+  min-height: 42px;
+  font-size: 18px;
+}
+
+li a {
+  display: block;
+  color: #282c34;
+  text-align: center;
+  padding: 0px;
+  text-decoration: none;
+  
+}
+
+
+li a:hover:not(.active) {
+  background-color: #D19A66;
+  color: #282c34
+}
+
+.active {
+  background-color: #E06C75;
+  color: #282c34;
+}
+.active:hover{
+    color: #282c34;
+}
+</style>
+</head>
+<body style="width: 100%">
+
+<ul>
+    <li class="nav-item ">
+        <NavLink class="nav-link" href="system">
+            <span class="oi oi-cog" aria-hidden="true"></span> System
+        </NavLink>
+    </li>
+    <li class="nav-item ">
+        <NavLink class="nav-link" href="pincontrol">
+            <span class="oi oi-pin" aria-hidden="true"></span> Pins
+        </NavLink>
+    </li>
+    <li class="nav-item ">
+        <NavLink class="nav-link" href="usbcontrol">
+            <span class="oi oi-bolt" aria-hidden="true"></span> USB
+        </NavLink>
+    </li>
+    <li class="nav-item ">
+        <NavLink class="nav-link" href="camera">
+            <span class="oi oi-camera-slr" aria-hidden="true"></span> Camera
+        </NavLink>
+    </li>        
+    <li class="nav-item ">
+        <NavLink class="nav-link" href="help">
+            <span class="oi oi-question-mark" aria-hidden="true"></span> Help
+        </NavLink>
+    </li>
+<!--     <li class="nav-item ">
+        <NavLink class="nav-link" href="pincomp">
+            <span class="oi oi-pin" aria-hidden="true"></span> Pin
+        </NavLink>
+    </li> -->
+
+
+
+</ul>
+</body>
+</html>
+@code {
+
+}

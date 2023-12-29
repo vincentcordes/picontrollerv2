@@ -1,0 +1,261 @@
+﻿@page "/camera"
+@using Unosquare.RaspberryIO.Camera;
+@inject Services.CamControl.CamControlService CameraControl
+<style>
+
+.accordian_button{
+  border: none;
+  color:#282c34;
+  background-color:#98C379;
+  padding: 1px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  margin-left: 5px;
+  cursor: pointer;
+  border-radius: 50%;
+  min-width: 14px;
+  min-height: 14px;
+
+}
+
+.togglebutton {
+  border: none;
+  background-color: #98C379;
+  color: #282c34;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  min-width: 80px;
+  border-radius: 20%;
+  min-height: 42px;
+}
+.table{
+    color: white;
+    
+}
+.td-text{
+  align-content: center;
+  text-align: center;
+  vertical-align: middle;
+  <!-- display: inline-block; -->
+  font-size: 16px;
+}
+.td{
+  vertical-align: middle;
+}
+</style>
+
+<div style="width:100%;">
+
+<h1>Camera</h1>
+
+<br>
+<div style="display: inline-block">
+    <h5 style="display: inline-block">Settings</h5>
+    <button style="display: inline-block" class="accordian_button" @onclick="ShowHideSettings">@CollapseButton</button>    
+</div>
+    
+    <div class="" style="display: @display; overflow: @overflow">
+    <table class="table" style="width:100%; font-size: 12px">
+    <thead>
+        
+            <tr>
+                <th>Setting</th>
+                <th>Value</th>
+                
+                <th>Description</th>
+            </tr>
+       
+    </thead>
+    <tbody>
+        <tr>
+            <td style=" vertical-align: middle">Height</td>
+            <td style=" vertical-align: middle">
+                <input type="number" style="max-width: 100px" @bind-value="@CameraControl.CameraManager.StillSettings.CaptureHeight">
+            </td>
+            <td style=" vertical-align: middle">Image height in pixels.</td>
+        </tr>
+        <tr>
+            <td style=" vertical-align: middle">Width</td>
+            <td style=" vertical-align: middle">
+                <input type="number" style="max-width: 100px" @bind-value="@CameraControl.CameraManager.StillSettings.CaptureWidth">
+            </td>
+            <td style=" vertical-align: middle">Image width in pixels.</td>
+        </tr>
+        <tr>
+            <td style=" vertical-align: middle">Timeout</td>
+            <td style="vertical-align: middle">
+                <input type="number" style="max-width: 100px" @bind-value="@CameraControl.CameraManager.StillSettings.CaptureTimeoutMilliseconds">
+            </td>
+            <td style=" vertical-align: middle">Capture Timeout in ms. Determins delay before snapping image.</td>
+        </tr>
+        <tr>
+            <td style=" vertical-align: middle">Shutter Speed</td>
+            <td style="vertical-align: middle">
+                <input type="number" min="-1" max="6000000" style="max-width: 100px" @bind-value="@CameraControl.CameraManager.StillSettings.CaptureShutterSpeedMicroseconds">
+            </td>
+            <td style=" vertical-align: middle">Controls the shutter speed in microseconds.</td>
+        </tr>
+        <tr>
+            <td style=" vertical-align: middle">Exposure Mode</td>
+            <td style="vertical-align: middle">
+                <select style="vertical-align: middle" @bind="CameraControl.CameraManager.StillSettings.CaptureExposure">
+                    <option value=@CameraExposureMode.AntiShake>@CameraExposureMode.AntiShake</option>
+                    <option value=@CameraExposureMode.Auto>@CameraExposureMode.Auto</option>
+                    <option value=@CameraExposureMode.Backlight>@CameraExposureMode.Backlight</option>
+                    <option value=@CameraExposureMode.Beach>@CameraExposureMode.Beach</option>
+                    <option value=@CameraExposureMode.Fireworks>@CameraExposureMode.Fireworks</option>
+                    <option value=@CameraExposureMode.FixedFps>@CameraExposureMode.FixedFps</option>
+                    <option value=@CameraExposureMode.Night>@CameraExposureMode.Night</option>
+                    <option value=@CameraExposureMode.NightPreview>@CameraExposureMode.NightPreview</option>
+                    <option value=@CameraExposureMode.Sports>@CameraExposureMode.Sports</option>
+                    <option value=@CameraExposureMode.Snow>@CameraExposureMode.Snow</option>
+                    <option value=@CameraExposureMode.Spotlight>@CameraExposureMode.Spotlight</option>
+                    <option value=@CameraExposureMode.VeryLong>@CameraExposureMode.VeryLong</option>
+                </select>
+            </td>
+            <td style=" vertical-align: middle">Controls the exposure mode.</td>
+        </tr>
+        <tr>
+            <td style=" vertical-align: middle">Capture Encoding</td>
+            <td style="vertical-align: middle">
+                <select style="vertical-align: middle" @bind="CameraControl.CameraManager.StillSettings.CaptureEncoding">
+                    <option value=@CameraImageEncodingFormat.Bmp>@CameraImageEncodingFormat.Bmp</option>
+                    <option value=@CameraImageEncodingFormat.Gif>@CameraImageEncodingFormat.Gif</option>
+                    <option value=@CameraImageEncodingFormat.Jpg>@CameraImageEncodingFormat.Jpg</option>
+                    <option value=@CameraImageEncodingFormat.Png>@CameraImageEncodingFormat.Png</option>
+                </select>
+            </td>
+            <td style=" vertical-align: middle">Sets the capture encoding.</td>
+        </tr>
+        <tr>
+            <td style=" vertical-align: middle">Metering Mode</td>
+            <td style="vertical-align: middle">
+                <select style="vertical-align: middle" @bind="CameraControl.CameraManager.StillSettings.CaptureMeteringMode">
+                    <option value=@CameraMeteringMode.Average>@CameraMeteringMode.Average</option>
+                    <option value=@CameraMeteringMode.Backlit>@CameraMeteringMode.Backlit</option>
+                    <option value=@CameraMeteringMode.Matrix>@CameraMeteringMode.Matrix</option>
+                    <option value=@CameraMeteringMode.Spot>@CameraMeteringMode.Spot</option>
+                </select>
+            </td>
+            <td style=" vertical-align: middle">Controls the metering mode.</td>
+        </tr>
+        <tr>
+            <td style=" vertical-align: middle">Image Effect</td>
+            <td style="vertical-align: middle">
+                <select style="vertical-align: middle" @bind="CameraControl.CameraManager.StillSettings.ImageEffect">
+                    <option value=@CameraImageEffect.Blackboard>@CameraImageEffect.Blackboard</option>
+                    <option value=@CameraImageEffect.Blur>@CameraImageEffect.Blur</option>
+                    <option value=@CameraImageEffect.Cartoon>@CameraImageEffect.Cartoon</option>
+                    <option value=@CameraImageEffect.ColourBalance>@CameraImageEffect.ColourBalance</option>
+                    <option value=@CameraImageEffect.ColourPoint>@CameraImageEffect.ColourPoint</option>
+                    <option value=@CameraImageEffect.Denoise>@CameraImageEffect.Denoise</option>
+                    <option value=@CameraImageEffect.Emboss>@CameraImageEffect.Emboss</option>
+                    <option value=@CameraImageEffect.Film>@CameraImageEffect.Film</option>
+                    <option value=@CameraImageEffect.GPen>@CameraImageEffect.GPen</option>
+                    <option value=@CameraImageEffect.Hatch>@CameraImageEffect.Hatch</option>
+                    <option value=@CameraImageEffect.None>@CameraImageEffect.None</option>
+                    <option value=@CameraImageEffect.OilPaint>@CameraImageEffect.OilPaint</option>
+                    <option value=@CameraImageEffect.Pastel>@CameraImageEffect.Pastel</option>
+                    <option value=@CameraImageEffect.Saturation>@CameraImageEffect.Saturation</option>
+                    <option value=@CameraImageEffect.Sketch>@CameraImageEffect.Sketch</option>
+                    <option value=@CameraImageEffect.Solarise>@CameraImageEffect.Solarise</option>
+                    <option value=@CameraImageEffect.SolourSwap>@CameraImageEffect.SolourSwap</option>
+                    <option value=@CameraImageEffect.WashedOut>@CameraImageEffect.WashedOut</option>
+                    <option value=@CameraImageEffect.WaterColour>@CameraImageEffect.WaterColour</option>
+                    <option value=@CameraImageEffect.Whiteboard>@CameraImageEffect.Whiteboard</option>
+                </select>
+            </td>
+            <td style=" vertical-align: middle">Sets an image effect.</td>
+        </tr>
+        <tr>
+            <td style=" vertical-align: middle">Image Rotation</td>
+            <td style="vertical-align: middle">
+                <select style="vertical-align: middle" @bind="CameraControl.CameraManager.StillSettings.ImageRotation">
+                    <option value=@CameraImageRotation.Degrees180>@CameraImageRotation.Degrees180</option>
+                    <option value=@CameraImageRotation.Degrees270>@CameraImageRotation.Degrees270</option>
+                    <option value=@CameraImageRotation.Degrees90>@CameraImageRotation.Degrees90</option>
+                    <option value=@CameraImageRotation.None>@CameraImageRotation.None</option>
+                </select>
+            </td>
+            <td style=" vertical-align: middle">Rotates the image.</td>
+        </tr>
+
+    </tbody>
+    </table>
+    <button class="togglebutton" @onclick=CameraControl.CameraManager.SetDefaults>Set Defaults</button>
+<!--     <table class="table" style="width:70%; font-size: 12px">
+        <h4>Camera ROI</h4>
+        <tbody>
+            <tr>
+                <td>Width</td>
+                <td>
+                    <input type="number" min="0.0" max="1.0" @bind-value="@CameraControl.CameraManager.ROIW">
+                </td>
+            </tr>
+            <tr>
+                <td>Height</td>
+                <td>
+                    <input type="number" min="0.0" max="1.0" @bind-value="@CameraControl.CameraManager.ROIH">
+                </td>
+            </tr>
+                <tr>
+                <td>X</td>
+                <td>
+                    <input type="number" min="0.0" max="1.0" @bind-value="@CameraControl.CameraManager.ROIX">
+                </td>
+            </tr>
+            <tr>
+                <td>Y</td>
+                <td>
+                    <input type="number" min="0.0" max="1.0" @bind-value="@CameraControl.CameraManager.ROIY">
+                </td>
+            </tr>
+        </tbody>
+    </table> -->
+
+</div>
+
+<br>
+
+<button class="togglebutton" @onclick=CameraControl.CameraManager.TakeImage>Take Image</button>
+<button class="togglebutton" @onclick=CameraControl.CameraManager.SaveImage>Save Image</button>
+<label>Capture Time: @CameraControl.CameraManager.CaptureTime</label>
+<br>
+<img src=@CameraControl.CameraManager.ImageString style="width:70%; horizontal-align: middle">
+
+</div>
+
+@code {
+    private string CollapseButton {get;set;} = "+";
+    private string overflow {get;set;} = "hidden";
+    private string display {get;set;} = "none";
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //}
+
+    public void TestMethod()
+    {
+        Console.WriteLine("Test Method Called");
+    } 
+    private void ShowHideSettings()
+    {
+        if(CollapseButton == "-")
+            CollapseButton = "+";
+        else
+            CollapseButton = "-";
+        
+        if(display == "none")
+            display = "block";
+        else
+            display = "none";
+    }
+
+}

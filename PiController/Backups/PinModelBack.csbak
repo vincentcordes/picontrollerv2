@@ -1,0 +1,138 @@
+        public class PinModel
+        {
+            public Pin Pin {get;}
+            
+            private string _ToggleButtonColor;
+            public string ToggleButtonColor 
+            {
+                get {return _ToggleButtonColor;}
+                set{_ToggleButtonColor = value;  NotifyDataChanged();}
+            }
+            
+            public string RepeatingButtonColor => SetRepeatingColor();
+            public string RepeatToggleMessage => SetRepeatingMessage();
+            public string ModeToggleColor => SetModeToggleColor();
+            public string LockColor => SetLockColor();
+            public string LockMessage => SetLockMessage();
+            public string ModeButtonColor => SetModeToggleColor();
+            public bool PinLock = false;
+            public bool ToggleStateDisabled => SetStateToggleDisabled();
+            public bool ModeChangeDisabled => SetModeChangeDisabled();
+            public bool RepeatingToggleDisabled => SetRepeatingToggleDisabled();
+            
+            
+            public PinModel(Pin pin)
+            {
+                Pin = pin;
+                Pin.Notify += SetPinColor;
+                SetPinColor();
+            }
+
+            
+            public void SetPinColor()
+            {
+                    Console.WriteLine($"Set color {Pin.PinNumber} {Pin.PinState.ToString()}");
+
+                    if(Pin.PinType == ePinType.Ground)
+                        ToggleButtonColor = "#42A2EF";
+
+                    if(Pin.PinType == ePinType.Power)
+                        if(Pin.PinFunction == "Power 5v")
+                            ToggleButtonColor = "#992727";
+                        else
+                            ToggleButtonColor = "#E06C75";
+
+                    if(Pin.PinType == ePinType.GPIO)
+                        if(Pin.PinState == eState.High)
+                            ToggleButtonColor = "#E06C75";
+                        else
+                            ToggleButtonColor = "#42A2EF";
+            }
+
+            public event Action OnChange;
+
+            private void NotifyDataChanged() => OnChange?.Invoke();
+
+            public string SetRepeatingMessage()
+            {
+                var message = "Start";
+                if(Pin.RepeatingToggle)
+                    message = "Stop";
+                
+                return message;
+
+            }
+            public string SetRepeatingColor()
+            {
+                var color = "#98C379";
+
+                if(Pin.RepeatingToggle)
+                    color = "#D19A66";
+
+                return color; 
+            }
+
+            public bool SetStateToggleDisabled()
+            {
+                var disabled = false;
+                if(PinLock || Pin.PinMode.ToString() == "Input" || Pin.RepeatingToggle)
+                    disabled = true;
+                
+                return disabled;
+            }
+
+            public bool SetRepeatingToggleDisabled()
+            {
+                var disabled = false;
+                if(Pin.PinMode.ToString() == "Input" || PinLock)
+                    disabled = true;
+                return disabled;
+            }
+
+            public void SetLock()
+            {
+                
+                if(PinLock)
+                    PinLock = false;
+                else
+                    PinLock = true;
+            }
+
+            public string SetLockColor()
+            {
+                var color = "#a14630";
+
+                if(PinLock)
+                    color = "#278f82";
+
+                return color;
+            }
+
+            public string SetLockMessage()
+            {
+                var message = "Lock";
+                if(PinLock)
+                    message = "UnLock";
+                return message;
+            }
+
+            public string SetModeToggleColor()
+            {
+                
+                var color = "#cAa93C";
+
+                if(Pin.PinMode.ToString() == "Input")
+                    color = "#8989ff";
+
+                return color;
+            }
+
+            public bool SetModeChangeDisabled()
+            {
+                bool disabled = false;
+                if(PinLock || Pin.RepeatingToggle)
+                    disabled = true;
+                
+                return disabled;
+            }
+        }
